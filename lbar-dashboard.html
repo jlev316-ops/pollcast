@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBC Sports Boston — L-Bar Dashboard</title>
+<link rel="stylesheet" href="https://use.typekit.net/hpr7qog.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --nbc-blue:  #0089D0;
+  --nbc-red:   #E31837;
+  --bg:        #00111F;
+  --surface:   #001529;
+  --surface2:  #011e3a;
+  --border:    #0a2d4a;
+  --border2:   #0e3a5e;
+  --muted:     #3a6080;
+  --text:      #f0f4f8;
+  --accent:    #0089D0;
+  --font:      'antarctican', sans-serif;
+}
+html,body { height:100%; font-family:var(--font); background:var(--bg); color:var(--text); }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* ── LAYOUT ─────────────────────────────────────── */
+body { display:flex; flex-direction:column; }
+
+nav {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:0 24px; height:50px; display:flex; align-items:center; gap:16px;
+  flex-shrink:0; position:sticky; top:0; z-index:50;
+}
+.logo { font-size:14px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+.logo span { color:var(--muted); font-weight:400; }
+.sep  { width:1px; height:18px; background:var(--border); }
+.vc   { font-size:11px; color:var(--muted); letter-spacing:.06em; }
+.vc strong { color:var(--text); }
+.nav-r { margin-left:auto; display:flex; gap:6px; }
+
+.nb {
+  padding:6px 12px; border-radius:6px; font-size:10px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; border:1px solid var(--border);
+  color:var(--muted); cursor:pointer; background:none; font-family:var(--font);
+  transition:all .18s; white-space:nowrap;
+}
+.nb:hover { color:var(--text); border-color:var(--border2); background:var(--surface2); }
+.nb.go { background:var(--nbc-blue); border-color:var(--nbc-blue); color:#fff; }
+.nb.go:hover { opacity:.88; }
+.nb.pull { border-color:rgba(255,60,60,.35); color:rgba(255,80,80,.7); }
+.nb.pull:hover { border-color:var(--nbc-red); color:var(--nbc-red); background:rgba(255,60,60,.07); }
+
+.body { display:flex; flex:1; overflow:hidden; }
+
+/* ── PREVIEW ──────────────────────────────────────── */
+.preview-col {
+  width:55%; flex-shrink:0; border-right:1px solid var(--border);
+  display:flex; flex-direction:column; overflow:hidden;
+  background:#001020;
+}
+.preview-header {
+  padding:14px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.preview-lbl {
+  font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
+  display:flex; align-items:center; gap:8px;
+}
+.onair { font-size:8px; font-weight:800; letter-spacing:.15em; color:var(--nbc-red); border:1px solid rgba(255,60,60,.4); border-radius:3px; padding:2px 5px; display:none; }
+.onair.show { display:inline; animation:blink 1.2s step-end infinite; }
+
+.preview-frame {
+  flex:1; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* The iframe preview */
+#lbar-iframe {
+  width:100%; height:100%;
+  border:none; display:block;
+  background:#00b140;
+  pointer-events:none;
+}
+
+/* ── CONTROLS ──────────────────────────────────────── */
+.controls-col {
+  flex:1; overflow-y:auto; padding:20px 24px;
+  display:flex; flex-direction:column; gap:20px;
+}
+
+.ctrl-section { display:flex; flex-direction:column; gap:12px; }
+.ctrl-heading {
+  font-size:9px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--muted); display:flex; align-items:center; gap:10px;
+}
+.ctrl-heading::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.ctrl-label { font-size:10px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:5px; display:block; }
+.ctrl-input {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:7px; color:var(--text); font-family:var(--font); font-size:13px;
+  padding:9px 12px; outline:none; transition:border-color .2s;
+}
+.ctrl-input:focus { border-color:var(--accent); }
+
+.cb {
+  padding:8px 13px; border-radius:7px; border:1px solid var(--border);
+  background:var(--surface2); color:var(--muted); font-family:var(--font);
+  font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  cursor:pointer; transition:all .18s; white-space:nowrap;
+}
+.cb:hover { border-color:var(--border2); color:var(--text); background:var(--surface); }
+.cb.go   { background:var(--nbc-blue); border-color:var(--nbc-blue); color:#fff; }
+.cb.go:hover { opacity:.88; }
+.cb.pull { border-color:rgba(255,60,60,.35); color:rgba(255,80,80,.7); }
+.cb.pull:hover { border-color:var(--nbc-red); color:var(--nbc-red); background:rgba(255,60,60,.07); }
+.cb.active { border-color:var(--nbc-blue); color:var(--nbc-blue); background:rgba(0,137,208,.08); }
+.btn-row { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+
+/* option builder with images */
+.opt-builder-list { display:flex; flex-direction:column; gap:7px; margin-bottom:8px; }
+.opt-row { display:flex; gap:6px; align-items:center; }
+.opt-row input { flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:7px; color:var(--text); font-family:var(--font); font-size:13px; padding:8px 11px; outline:none; transition:border-color .2s; }
+.opt-row input:focus { border-color:var(--accent); }
+.opt-img-btn {
+  width:34px; height:34px; border-radius:6px; border:1px solid var(--border);
+  background:var(--surface2); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  position:relative; flex-shrink:0; transition:border-color .18s; overflow:hidden;
+}
+.opt-img-btn:hover { border-color:var(--nbc-blue); }
+.opt-img-btn input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.opt-img-btn .thumb { width:100%; height:100%; object-fit:cover; border-radius:5px; display:none; }
+.del-btn { width:30px; height:30px; background:none; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; font-size:15px; transition:all .18s; flex-shrink:0; }
+.del-btn:hover { color:var(--nbc-red); border-color:var(--nbc-red); }
+.add-opt-btn { width:100%; background:none; border:1px dashed var(--border); border-radius:7px; color:var(--muted); font-family:var(--font); font-size:11px; letter-spacing:.08em; padding:8px; cursor:pointer; transition:all .18s; }
+.add-opt-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+/* logo & QR upload */
+.upload-area { display:flex; align-items:center; gap:10px; }
+.upload-preview {
+  flex-shrink:0; border-radius:6px; overflow:hidden;
+  border:1px solid var(--border2); display:flex; align-items:center; justify-content:center;
+}
+.upload-preview.logo-prev { width:60px; height:40px; background:var(--nbc-blue); }
+.upload-preview.qr-prev   { width:48px; height:48px; background:rgba(255,255,255,.9); }
+.upload-preview img { max-width:100%; max-height:100%; object-fit:contain; display:none; }
+.upload-preview .ph { font-size:7px; color:rgba(255,255,255,.3); letter-spacing:.06em; text-transform:uppercase; text-align:center; line-height:1.4; padding:3px; }
+.upload-preview.qr-prev .ph { color:rgba(0,0,0,.3); }
+.drop-zone {
+  flex:1; height:48px; border-radius:7px; border:1.5px dashed var(--border2);
+  background:var(--surface2); display:flex; align-items:center; justify-content:center;
+  gap:8px; cursor:pointer; position:relative; transition:border-color .2s; overflow:hidden;
+}
+.drop-zone:hover { border-color:var(--nbc-blue); }
+.drop-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.drop-zone span { font-size:11px; color:var(--muted); letter-spacing:.06em; pointer-events:none; }
+.clear-btn { padding:6px 9px; border-radius:6px; border:1px solid var(--border); background:none; color:var(--muted); font-family:var(--font); font-size:10px; cursor:pointer; transition:all .18s; }
+.clear-btn:hover { color:var(--nbc-red); border-color:var(--nbc-red); }
+
+/* sim + color */
+.sim-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px; }
+.sim-btn { padding:7px 9px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); font-family:var(--font); font-size:10px; font-weight:600; cursor:pointer; transition:all .18s; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sim-btn:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,137,208,.05); }
+
+.swatch-row { display:flex; gap:7px; flex-wrap:wrap; }
+.swatch { width:24px; height:24px; border-radius:5px; cursor:pointer; border:2px solid transparent; transition:transform .15s,border-color .15s; }
+.swatch:hover { transform:scale(1.18); }
+.swatch.active { border-color:#fff; }
+
+.preset-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.preset-btn { padding:6px 8px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); font-family:var(--font); font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:all .18s; }
+.preset-btn:hover { border-color:var(--border2); color:var(--text); }
+.preset-btn.active { border-color:var(--accent); color:var(--accent); }
+
+.divider { height:1px; background:var(--border); }
+
+.toast {
+  position:fixed; bottom:18px; left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--surface2); border:1px solid var(--border2);
+  border-radius:8px; padding:10px 18px; font-size:12px; color:var(--accent);
+  letter-spacing:.08em; transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  z-index:999; pointer-events:none;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">NBC Sports <span>Boston · L-Bar</span></div>
+  <div class="sep"></div>
+  <div class="vc">Votes: <strong id="dash-votes">0</strong></div>
+  <div class="nav-r">
+    <button class="nb go"   onclick="takeBar()">▶ Take L-Bar</button>
+    <button class="nb pull" onclick="pullBar()">■ Pull L-Bar</button>
+    <button class="nb" onclick="openLBar()">↗ Open in New Tab</button>
+  </div>
+</nav>
+
+<div class="body">
+
+  <!-- PREVIEW -->
+  <div class="preview-col">
+    <div class="preview-header">
+      <div class="preview-lbl">
+        Live Preview — 16:9 chroma green
+        <span class="onair" id="onair-badge">● On Air</span>
+      </div>
+    </div>
+    <div class="preview-frame">
+      <iframe id="lbar-iframe" src="lbar.html?autoshow=0" title="L-Bar Preview"></iframe>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-col">
+
+    <!-- PLAYOUT -->
+    <div class="ctrl-section">
+      <div class="ctrl-heading">Playout</div>
+      <div class="btn-row">
+        <button class="cb go"   onclick="takeBar()">▶ Take</button>
+        <button class="cb pull" onclick="pullBar()">■ Pull</button>
+      </div>
+      <div>
+        <label class="ctrl-label">Ticker / Vote URL</label>
+        <input class="ctrl-input" id="ticker-inp" value="nbcsportsboston.com/poll" oninput="pushState()">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- POLL BUILDER -->
+    <div class="ctrl-section">
+      <div class="ctrl-heading">Poll</div>
+      <div>
+        <label class="ctrl-label">Question</label>
+        <input class="ctrl-input" id="q-inp" value="Who is the Celtics MVP this season?" oninput="pushState()">
+      </div>
+      <div>
+        <label class="ctrl-label">Options — click 📷 to add player image</label>
+        <div class="opt-builder-list" id="opt-list"></div>
+        <button class="add-opt-btn" onclick="addOpt()">+ Add option</button>
+      </div>
+      <div class="btn-row">
+        <button class="cb go" onclick="applyPoll()">Apply Poll</button>
+        <button class="cb pull" onclick="resetVotes()">Reset Votes</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SIMULATE -->
+    <div class="ctrl-section">
+      <div class="ctrl-heading">Simulate Votes</div>
+      <div class="sim-grid" id="sim-grid"></div>
+      <div class="btn-row">
+        <button class="cb" id="stream-btn" onclick="toggleStream()">▶ Stream</button>
+        <button class="cb" onclick="addBatch(10)">+10</button>
+        <button class="cb" onclick="addBatch(100)">+100</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- APPEARANCE -->
+    <div class="ctrl-section">
+      <div class="ctrl-heading">Appearance</div>
+
+      <div>
+        <label class="ctrl-label">Logo</label>
+        <div class="upload-area">
+          <div class="upload-preview logo-prev" id="logo-prev">
+            <img id="logo-img" src="" alt="">
+            <div class="ph">No Logo</div>
+          </div>
+          <div class="drop-zone">
+            <input type="file" accept="image/*" onchange="uploadLogo(event)">
+            <span>Click or drag logo here</span>
+          </div>
+          <button class="clear-btn" onclick="clearLogo()">Clear</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="ctrl-label">QR Code</label>
+        <div class="upload-area">
+          <div class="upload-preview qr-prev" id="qr-prev">
+            <img id="qr-img" src="" alt="">
+            <div class="ph">QR Code</div>
+          </div>
+          <div class="drop-zone">
+            <input type="file" accept="image/*" onchange="uploadQR(event)">
+            <span>Click or drag QR code here</span>
+          </div>
+          <button class="clear-btn" onclick="clearQR()">Clear</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="ctrl-label">Label Text (when no logo)</label>
+        <input class="ctrl-input" id="kw-inp" value="Viewer Vote" oninput="pushState()">
+      </div>
+
+      <div>
+        <label class="ctrl-label">Accent Color</label>
+        <div class="swatch-row" id="swatch-row"></div>
+      </div>
+
+      <div>
+        <label class="ctrl-label">Team Preset</label>
+        <div class="preset-grid" id="preset-grid"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS  = ['#0089D0','#E31837','#6460AA','#FFB81C','#34d399','#ff8c42'];
+const PRESETS = {
+  'NBC':      '#0089D0',
+  'Celtics':  '#007A33',
+  'Bruins':   '#FFB81C',
+  'Red Sox':  '#BD3039',
+  'Patriots': '#4A90D9',
+  'Breaking': '#E31837',
+};
+
+let state = {
+  question: 'Who is the Celtics MVP this season?',
+  options: [
+    { label:'Tatum',     votes:0, imgSrc:null },
+    { label:'Brown',     votes:0, imgSrc:null },
+    { label:'White',     votes:0, imgSrc:null },
+    { label:'Porzingis', votes:0, imgSrc:null },
+  ],
+  logoSrc: null,
+  qrSrc:   null,
+  keyword:  'Viewer\nVote',
+  accent:   '#0089D0',
+  ticker:   'nbcsportsboston.com/poll',
+};
+
+let builderOpts   = ['Tatum','Brown','White','Porzingis'];
+let builderImages = [null,null,null,null];
+
+let lbarWindow  = null;   // opened popup
+let onAir       = false;
+let streaming   = false;
+let streamTimer = null;
+
+// ── iframe ref ────────────────────────────────────────
+const iframe = document.getElementById('lbar-iframe');
+function iframeReady() { return iframe && iframe.contentWindow; }
+
+// wait for iframe to load before sending initial state
+iframe.addEventListener('load', () => {
+  pushState();
+});
+
+// ── postMessage bridge ────────────────────────────────
+function sendMsg(type, payload) {
+  // send to iframe
+  if (iframeReady()) iframe.contentWindow.postMessage({ type, payload }, '*');
+  // also send to popup if open
+  if (lbarWindow && !lbarWindow.closed) lbarWindow.postMessage({ type, payload }, '*');
+}
+
+function pushState() {
+  // sync state from inputs
+  state.question = document.getElementById('q-inp').value;
+  state.ticker   = document.getElementById('ticker-inp').value;
+  const kwVal = document.getElementById('kw-inp').value.trim();
+  const kwParts = kwVal.split(/\s+/);
+  state.keyword = kwParts.length >= 2 ? kwParts[0]+'\n'+kwParts.slice(1).join(' ') : kwVal;
+
+  // sync options from builder
+  state.options = builderOpts.map((label, i) => ({
+    label, votes: state.options[i]?.votes || 0, imgSrc: builderImages[i] || null,
+  }));
+
+  sendMsg('STATE_UPDATE', state);
+  updateDashVotes();
+  buildSimGrid();
+}
+
+// ── playout ───────────────────────────────────────────
+function takeBar() {
+  sendMsg('SHOW');
+  onAir = true;
+  document.getElementById('onair-badge').classList.add('show');
+  showToast('L-Bar is live');
+}
+function pullBar() {
+  sendMsg('HIDE');
+  onAir = false;
+  document.getElementById('onair-badge').classList.remove('show');
+  showToast('L-Bar pulled');
+}
+function openLBar() {
+  lbarWindow = window.open('lbar.html?autoshow=1', '_blank', 'width=1280,height=720');
+  lbarWindow.addEventListener('load', () => {
+    lbarWindow.postMessage({ type:'STATE_UPDATE', payload:state }, '*');
+    if (onAir) lbarWindow.postMessage({ type:'SHOW' }, '*');
+  });
+  showToast('L-Bar opened — add as browser source in OBS');
+}
+
+// ── poll builder ──────────────────────────────────────
+function renderBuilderOpts() {
+  const list = document.getElementById('opt-list'); if (!list) return;
+  list.innerHTML = '';
+  while (builderImages.length < builderOpts.length) builderImages.push(null);
+
+  builderOpts.forEach((opt, i) => {
+    const row = document.createElement('div');
+    row.className = 'opt-row';
+    const hasImg = !!builderImages[i];
+    row.innerHTML = `
+      <div class="opt-img-btn" data-idx="${i}" title="Add player image">
+        <input type="file" accept="image/*" onchange="uploadOptImg(event,${i})">
+        ${hasImg
+          ? `<img class="thumb" src="${builderImages[i]}" style="display:block;">`
+          : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a6080" stroke-width="2">
+               <rect x="3" y="3" width="18" height="18" rx="2"/>
+               <circle cx="8.5" cy="8.5" r="1.5" fill="#3a6080"/>
+               <path d="M21 15l-5-5L5 21"/>
+             </svg>`}
+      </div>
+      <input type="text" value="${opt}" placeholder="Option ${i+1}" oninput="builderOpts[${i}]=this.value;pushState()">
+      <button class="del-btn" onclick="delOpt(${i})">×</button>`;
+    list.appendChild(row);
+  });
+}
+
+function addOpt() {
+  if (builderOpts.length >= 6) { showToast('Max 6 options'); return; }
+  builderOpts.push(''); builderImages.push(null); renderBuilderOpts();
+  document.querySelectorAll('.opt-row input[type=text]').item(builderOpts.length-1)?.focus();
+}
+function delOpt(i) {
+  if (builderOpts.length <= 2) { showToast('Min 2 options'); return; }
+  builderOpts.splice(i,1); builderImages.splice(i,1); renderBuilderOpts(); pushState();
+}
+function applyPoll() {
+  pushState(); showToast('Poll applied to L-Bar');
+}
+function resetVotes() {
+  state.options.forEach(o => o.votes = 0); pushState(); showToast('Votes reset');
+}
+
+// ── image uploads ─────────────────────────────────────
+function uploadOptImg(e, idx) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    builderImages[idx] = ev.target.result;
+    renderBuilderOpts(); pushState(); showToast('Image added');
+  };
+  r.readAsDataURL(file);
+}
+function uploadLogo(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    state.logoSrc = ev.target.result;
+    const img = document.getElementById('logo-img');
+    const ph  = document.querySelector('#logo-prev .ph');
+    img.src = state.logoSrc; img.style.display = 'block'; if(ph) ph.style.display='none';
+    pushState(); showToast('Logo uploaded');
+  };
+  r.readAsDataURL(file);
+}
+function clearLogo() {
+  state.logoSrc = null;
+  const img = document.getElementById('logo-img');
+  const ph  = document.querySelector('#logo-prev .ph');
+  img.src=''; img.style.display='none'; if(ph) ph.style.display='block';
+  pushState(); showToast('Logo cleared');
+}
+function uploadQR(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    state.qrSrc = ev.target.result;
+    const img = document.getElementById('qr-img');
+    const ph  = document.querySelector('#qr-prev .ph');
+    img.src = state.qrSrc; img.style.display='block'; if(ph) ph.style.display='none';
+    pushState(); showToast('QR uploaded');
+  };
+  r.readAsDataURL(file);
+}
+function clearQR() {
+  state.qrSrc = null;
+  const img = document.getElementById('qr-img');
+  const ph  = document.querySelector('#qr-prev .ph');
+  img.src=''; img.style.display='none'; if(ph) ph.style.display='block';
+  pushState(); showToast('QR cleared');
+}
+
+// ── simulate ──────────────────────────────────────────
+function simVote(i) {
+  state.options[i].votes++; pushState();
+}
+function addBatch(n) {
+  for (let i=0;i<n;i++) state.options[Math.floor(Math.random()*state.options.length)].votes++;
+  pushState();
+}
+function toggleStream() {
+  streaming = !streaming;
+  const btn = document.getElementById('stream-btn');
+  btn.textContent = streaming ? '■ Stop' : '▶ Stream';
+  btn.classList.toggle('active', streaming);
+  if (streaming) {
+    streamTimer = setInterval(() => {
+      state.options[Math.floor(Math.random()*state.options.length)].votes++;
+      pushState();
+    }, 600);
+  } else clearInterval(streamTimer);
+}
+function buildSimGrid() {
+  const grid = document.getElementById('sim-grid'); if(!grid) return;
+  grid.innerHTML = '';
+  state.options.forEach((opt,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'sim-btn';
+    btn.textContent = `+1 ${opt.label}`;
+    btn.onclick = () => simVote(i);
+    grid.appendChild(btn);
+  });
+}
+function updateDashVotes() {
+  const t = state.options.reduce((s,o)=>s+o.votes,0);
+  const el = document.getElementById('dash-votes');
+  if (el) el.textContent = t.toLocaleString();
+}
+
+// ── appearance ────────────────────────────────────────
+function buildSwatches() {
+  const row = document.getElementById('swatch-row'); if(!row) return;
+  row.innerHTML = '';
+  ['#0089D0','#E31837','#007A33','#FFB81C','#BD3039','#6460AA'].forEach(hex => {
+    const s = document.createElement('div');
+    s.className = 'swatch' + (hex===state.accent?' active':'');
+    s.style.background = hex;
+    s.onclick = () => { state.accent=hex; buildSwatches(); pushState(); };
+    row.appendChild(s);
+  });
+}
+function buildPresets() {
+  const grid = document.getElementById('preset-grid'); if(!grid) return;
+  grid.innerHTML = '';
+  Object.entries(PRESETS).forEach(([name,col],idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'preset-btn' + (idx===0?' active':'');
+    btn.textContent = name;
+    btn.onclick = () => {
+      document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      state.accent = col; buildSwatches(); pushState();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ── toast ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── init ──────────────────────────────────────────────
+renderBuilderOpts();
+buildSimGrid();
+buildSwatches();
+buildPresets();
+</script>
+</body>
+</html>

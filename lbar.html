@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBC Sports Boston — L-Bar</title>
+<link rel="stylesheet" href="https://use.typekit.net/hpr7qog.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --nbc-blue:  #0089D0;
+  --nbc-navy:  #001E3C;
+  --nbc-red:   #E31837;
+  --glass:     rgba(0, 14, 26, 0.93);
+  --glass2:    rgba(0, 10, 20, 0.96);
+  --border:    rgba(255,255,255,0.07);
+  --font:      'antarctican', sans-serif;
+  --accent:    #0089D0;
+
+  /* L-bar dimensions */
+  --vert-w:    180px;
+  --horiz-h:   110px;
+}
+
+html, body {
+  width: 100vw; height: 100vh;
+  background: #00b140; /* chroma key green */
+  overflow: hidden;
+  font-family: var(--font);
+}
+
+/* ── KEYFRAMES ───────────────────────────────────── */
+@keyframes blink       { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes slideInVert {
+  from { transform: translateX(calc(-1 * var(--vert-w))); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutVert {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(calc(-1 * var(--vert-w))); opacity: 0; }
+}
+@keyframes slideInHoriz {
+  from { transform: translateY(var(--horiz-h)); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideOutHoriz {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(var(--horiz-h)); opacity: 0; }
+}
+@keyframes countUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+@keyframes surgeFlash {
+  0%   { opacity: 1; }
+  30%  { opacity: 0.5; color: #fff; }
+  100% { opacity: 1; }
+}
+@keyframes barGrow {
+  from { width: 0; }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── L-BAR WRAPPER ───────────────────────────────── */
+.lbar {
+  position: absolute;
+  bottom: 0; left: 0;
+  /* hidden by default — JS toggles .visible/.hiding */
+}
+
+/* Vertical bar */
+.lbar-vert {
+  position: absolute;
+  left: 0;
+  bottom: var(--horiz-h);
+  width: var(--vert-w);
+  height: calc(100vh - var(--horiz-h));
+  background: var(--glass2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  transform: translateX(calc(-1 * var(--vert-w)));
+}
+.lbar.visible .lbar-vert {
+  animation: slideInVert 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s both;
+}
+.lbar.hiding .lbar-vert {
+  animation: slideOutVert 0.45s cubic-bezier(0.7,0,1,0.6) both;
+}
+
+/* top accent stripe on vertical bar */
+.lbar-vert::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--nbc-blue), var(--nbc-red));
+  z-index: 2;
+}
+
+/* right edge accent line */
+.lbar-vert::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
+  background: linear-gradient(180deg, var(--nbc-blue) 0%, var(--nbc-red) 100%);
+  z-index: 2;
+}
+
+/* Logo section */
+.vert-logo-section {
+  flex-shrink: 0;
+  background: var(--nbc-blue);
+  padding: 16px 14px 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  min-height: 80px;
+}
+.vert-logo-img {
+  max-width: 130px; max-height: 48px; object-fit: contain; display: none;
+}
+.vert-logo-text {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.vert-logo-eyebrow {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55); line-height: 1;
+}
+.vert-logo-kw {
+  font-size: 18px; font-weight: 900; color: #fff;
+  line-height: 1; text-transform: uppercase; letter-spacing: 0.02em; text-align: center;
+}
+.vert-live-pill {
+  background: var(--nbc-red); color: #fff;
+  font-size: 7px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 2px; margin-top: 6px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.vert-live-dot {
+  width: 4px; height: 4px; background: #fff; border-radius: 50%;
+  animation: blink 1.1s step-end infinite;
+}
+
+/* Question section — fills middle */
+.vert-question-section {
+  flex: 1;
+  padding: 18px 14px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.vert-question-label {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-bottom: 8px;
+}
+.vert-question-text {
+  font-size: 15px; font-weight: 800; color: #fff;
+  line-height: 1.35; letter-spacing: 0.01em;
+  overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical;
+}
+
+/* Vote count */
+.vert-votecount {
+  flex-shrink: 0;
+  padding: 9px 14px;
+  font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.12em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.vert-votecount strong {
+  color: rgba(255,255,255,0.65); transition: color 0.2s;
+}
+.vert-votecount strong.flash { animation: surgeFlash 0.4s ease; }
+
+/* QR section */
+.vert-qr-section {
+  flex-shrink: 0;
+  padding: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  border-top: 1px solid var(--border);
+}
+.vert-qr-box {
+  width: 110px; height: 110px;
+  background: rgba(255,255,255,0.93); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+}
+.vert-qr-box img { width: 100%; height: 100%; object-fit: contain; }
+.vert-qr-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; width: 100%; height: 100%;
+}
+.vert-qr-placeholder svg { opacity: 0.3; }
+.vert-qr-placeholder span {
+  font-size: 8px; color: rgba(0,0,0,0.35); letter-spacing: 0.1em;
+  text-transform: uppercase; text-align: center;
+}
+.vert-qr-cta {
+  font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.45);
+  letter-spacing: 0.1em; text-transform: uppercase; text-align: center; line-height: 1.4;
+}
+
+/* ── HORIZONTAL BAR ──────────────────────────────── */
+.lbar-horiz {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+  height: var(--horiz-h);
+  background: var(--glass);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: stretch;
+  overflow: hidden;
+  transform: translateY(var(--horiz-h));
+}
+.lbar.visible .lbar-horiz {
+  animation: slideInHoriz 0.55s cubic-bezier(0.16,1,0.3,1) both;
+}
+.lbar.hiding .lbar-horiz {
+  animation: slideOutHoriz 0.4s cubic-bezier(0.7,0,1,0.6) both;
+}
+
+/* top stripe on horizontal bar */
+.lbar-horiz::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--nbc-blue) 0%, var(--nbc-red) 50%, transparent 100%);
+}
+
+/* corner block — where L meets */
+.horiz-corner {
+  width: var(--vert-w);
+  flex-shrink: 0;
+  background: var(--nbc-blue);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; padding: 12px;
+  border-right: 3px solid rgba(255,255,255,0.15);
+  position: relative;
+}
+.horiz-corner::after {
+  content: '';
+  position: absolute; top: 0; right: 0; bottom: 0; width: 3px;
+  background: linear-gradient(180deg, var(--nbc-red), var(--nbc-blue));
+}
+.corner-label {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+.corner-votes-num {
+  font-size: 28px; font-weight: 900; color: #fff; line-height: 1;
+  letter-spacing: -0.02em;
+}
+.corner-votes-lbl {
+  font-size: 8px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+/* options row */
+.horiz-options {
+  flex: 1;
+  display: flex; align-items: stretch;
+}
+
+.horiz-opt {
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 14px 18px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  animation: fadeSlideUp 0.5s ease both;
+}
+.horiz-opt:last-child { border-right: none; }
+
+/* background fill bar */
+.horiz-opt-fill {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 0%;
+  transition: height 0.8s cubic-bezier(0.34,1.1,0.64,1);
+  border-radius: 0;
+}
+
+/* leader highlight */
+.horiz-opt.leader::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent);
+}
+
+.horiz-opt-inner {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.horiz-opt-img-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.horiz-opt-img {
+  width: 36px; height: 36px; border-radius: 6px; object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; display: none;
+}
+
+.horiz-opt-label {
+  font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.horiz-opt.leader .horiz-opt-label {
+  color: rgba(255,255,255,0.9);
+}
+
+.horiz-opt-pct {
+  font-size: 38px; font-weight: 900; color: rgba(255,255,255,0.4);
+  line-height: 1; letter-spacing: -0.03em;
+  transition: color 0.3s;
+  animation: countUp 0.5s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+.horiz-opt.leader .horiz-opt-pct {
+  color: #fff;
+}
+.horiz-opt.surging .horiz-opt-pct {
+  animation: surgeFlash 0.4s ease;
+}
+
+.horiz-opt-votes {
+  font-size: 9px; color: rgba(255,255,255,0.25); letter-spacing: 0.1em; text-transform: uppercase;
+}
+.horiz-opt.leader .horiz-opt-votes { color: rgba(255,255,255,0.45); }
+
+/* thin vote bar at bottom of each option */
+.horiz-opt-bar-track {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: rgba(255,255,255,0.06);
+}
+.horiz-opt-bar-fill {
+  height: 100%;
+  transition: width 0.8s cubic-bezier(0.34,1.1,0.64,1); width: 0%;
+}
+
+/* ── PLAYOUT CONTROLS overlay (dashboard only) ── */
+/* These only show when loaded as ?view=l-bar, hidden on dashboard preview */
+</style>
+</head>
+<body>
+
+<div class="lbar" id="lbar">
+  <!-- VERTICAL BAR -->
+  <div class="lbar-vert">
+    <!-- Logo -->
+    <div class="vert-logo-section">
+      <img class="vert-logo-img" id="vert-logo-img" src="" alt="logo">
+      <div class="vert-logo-text" id="vert-logo-text">
+        <div class="vert-logo-eyebrow">Live Poll</div>
+        <div class="vert-logo-kw" id="vert-logo-kw">Viewer<br>Vote</div>
+        <div class="vert-live-pill"><span class="vert-live-dot"></span>Live</div>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div class="vert-question-section">
+      <div class="vert-question-label">Question</div>
+      <div class="vert-question-text" id="vert-question">—</div>
+    </div>
+
+    <!-- Vote count -->
+    <div class="vert-votecount">
+      <strong id="vert-votes">0</strong> votes cast
+    </div>
+
+    <!-- QR -->
+    <div class="vert-qr-section">
+      <div class="vert-qr-box" id="vert-qr-box">
+        <div class="vert-qr-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+            <rect x="5" y="5" width="3" height="3" fill="#000" stroke="none"/>
+            <rect x="16" y="5" width="3" height="3" fill="#000" stroke="none"/>
+            <rect x="5" y="16" width="3" height="3" fill="#000" stroke="none"/>
+            <path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/>
+          </svg>
+          <span>Upload QR<br>in dashboard</span>
+        </div>
+      </div>
+      <div class="vert-qr-cta" id="vert-qr-cta">Scan to vote</div>
+    </div>
+  </div>
+
+  <!-- HORIZONTAL BAR -->
+  <div class="lbar-horiz">
+    <!-- Corner block -->
+    <div class="horiz-corner">
+      <div class="corner-label">Total Votes</div>
+      <div class="corner-votes-num" id="corner-votes">0</div>
+      <div class="corner-votes-lbl">cast</div>
+    </div>
+
+    <!-- Options -->
+    <div class="horiz-options" id="horiz-options"></div>
+  </div>
+</div>
+
+<script>
+// ── SHARED STATE (read from URL params, or standalone demo) ──────────
+// When embedded via iframe or opened directly, state is passed via
+// postMessage from the dashboard or via URL params for demo mode.
+
+const COLORS = ['#0089D0','#E31837','#6460AA','#FFB81C','#34d399','#ff8c42'];
+
+let state = {
+  question: 'Who is the Celtics MVP this season?',
+  options: [
+    { label:'Tatum',     votes:142, imgSrc:null },
+    { label:'Brown',     votes:98,  imgSrc:null },
+    { label:'White',     votes:61,  imgSrc:null },
+    { label:'Porzingis', votes:37,  imgSrc:null },
+  ],
+  logoSrc: null,
+  qrSrc: null,
+  keyword: 'Viewer\nVote',
+  accent: '#0089D0',
+  ticker: 'nbcsportsboston.com/poll',
+};
+
+let visible = false;
+let surgingSet = new Set();
+
+// ── RENDER ────────────────────────────────────────────────────────────
+function render(surgingIndices = []) {
+  const { question, options, logoSrc, qrSrc, keyword, accent, ticker } = state;
+  const total = options.reduce((s,o) => s + o.votes, 0);
+  const maxV  = Math.max(...options.map(o => o.votes), 1);
+
+  document.documentElement.style.setProperty('--accent', accent);
+
+  // logo
+  const logoImg  = document.getElementById('vert-logo-img');
+  const logoText = document.getElementById('vert-logo-text');
+  if (logoSrc) {
+    logoImg.src = logoSrc; logoImg.style.display = 'block';
+    logoText.style.display = 'none';
+  } else {
+    logoImg.style.display = 'none'; logoText.style.display = 'flex';
+  }
+
+  // keyword
+  const kwEl = document.getElementById('vert-logo-kw');
+  if (kwEl) kwEl.innerHTML = keyword.replace('\n','<br>');
+
+  // question
+  const qEl = document.getElementById('vert-question');
+  if (qEl) qEl.textContent = question;
+
+  // vote counts
+  const vcEl = document.getElementById('vert-votes');
+  const cvEl = document.getElementById('corner-votes');
+  if (vcEl) {
+    vcEl.textContent = total.toLocaleString();
+    if (surgingIndices.length) { vcEl.classList.add('flash'); setTimeout(()=>vcEl.classList.remove('flash'),400); }
+  }
+  if (cvEl) cvEl.textContent = total.toLocaleString();
+
+  // QR
+  const qrBox = document.getElementById('vert-qr-box');
+  if (qrBox) {
+    if (qrSrc) {
+      qrBox.innerHTML = `<img src="${qrSrc}" alt="QR Code">`;
+    } else {
+      qrBox.innerHTML = `<div class="vert-qr-placeholder">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <rect x="5" y="5" width="3" height="3" fill="#000" stroke="none"/>
+          <rect x="16" y="5" width="3" height="3" fill="#000" stroke="none"/>
+          <rect x="5" y="16" width="3" height="3" fill="#000" stroke="none"/>
+          <path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/>
+        </svg>
+        <span>Upload QR<br>in dashboard</span>
+      </div>`;
+    }
+  }
+  const ctaEl = document.getElementById('vert-qr-cta');
+  if (ctaEl) ctaEl.textContent = ticker ? `Scan · ${ticker}` : 'Scan to vote';
+
+  // options
+  const container = document.getElementById('horiz-options');
+  if (!container) return;
+
+  options.forEach((opt, i) => {
+    const pct      = total > 0 ? Math.round((opt.votes / total) * 100) : 0;
+    const isLeader = opt.votes === maxV && opt.votes > 0;
+    const isSurge  = surgingIndices.includes(i);
+    const color    = COLORS[i % COLORS.length];
+
+    let cell = document.getElementById(`horiz-opt-${i}`);
+    const isNew = !cell;
+
+    if (isNew) {
+      cell = document.createElement('div');
+      cell.id = `horiz-opt-${i}`;
+      cell.style.animationDelay = `${i * 0.06}s`;
+      container.appendChild(cell);
+    }
+
+    cell.className = 'horiz-opt' + (isLeader?' leader':'') + (isSurge?' surging':'');
+
+    const imgHtml = opt.imgSrc
+      ? `<img class="horiz-opt-img" src="${opt.imgSrc}" style="display:block;" alt="${opt.label}">`
+      : '';
+
+    cell.innerHTML = `
+      <div class="horiz-opt-fill" style="background:${color}10;height:${Math.min(pct,80)}%"></div>
+      <div class="horiz-opt-inner">
+        <div class="horiz-opt-img-row">
+          ${imgHtml}
+          <div>
+            <div class="horiz-opt-label">${opt.label}</div>
+            <div class="horiz-opt-pct" style="color:${isLeader?'#fff':'rgba(255,255,255,0.38)'}">${pct}<span style="font-size:0.45em;font-weight:700;opacity:0.7">%</span></div>
+          </div>
+        </div>
+        <div class="horiz-opt-votes">${opt.votes.toLocaleString()} votes</div>
+      </div>
+      <div class="horiz-opt-bar-track">
+        <div class="horiz-opt-bar-fill" style="width:${pct}%;background:${isLeader?accent:color+'60'}"></div>
+      </div>`;
+
+    if (isSurge) setTimeout(() => cell.classList.remove('surging'), 500);
+  });
+
+  // remove extra cells if options changed
+  const cells = container.querySelectorAll('.horiz-opt');
+  cells.forEach((c, i) => { if (i >= options.length) c.remove(); });
+}
+
+// ── PLAYOUT ───────────────────────────────────────────────────────────
+function show() {
+  const el = document.getElementById('lbar');
+  el.classList.remove('hiding'); el.classList.add('visible');
+  visible = true;
+}
+function hide() {
+  const el = document.getElementById('lbar');
+  el.classList.remove('visible'); el.classList.add('hiding');
+  visible = false;
+  setTimeout(() => el.classList.remove('hiding'), 500);
+}
+
+// ── postMessage bridge (dashboard → this window) ─────────────────────
+window.addEventListener('message', (e) => {
+  if (!e.data || !e.data.type) return;
+
+  if (e.data.type === 'STATE_UPDATE') {
+    const prev = state.options.map(o => o.votes);
+    state = { ...state, ...e.data.payload };
+    const surging = state.options.reduce((acc,o,i) => {
+      if (o.votes > (prev[i]||0)) acc.push(i);
+      return acc;
+    }, []);
+    render(surging);
+  }
+  if (e.data.type === 'SHOW') show();
+  if (e.data.type === 'HIDE') hide();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+if (params.get('autoshow') === '1') {
+  render(); setTimeout(show, 400);
+} else {
+  render();
+}
+</script>
+</body>
+</html>
