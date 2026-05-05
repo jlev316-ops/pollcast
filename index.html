@@ -587,6 +587,144 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
   z-index:999; pointer-events:none;
 }
 .toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ── SCHEDULE FIELDS ─────────────────────────────── */
+.schedule-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.schedule-field { display:flex; flex-direction:column; gap:5px; }
+.schedule-field label { font-size:10px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+.schedule-field input[type=datetime-local] {
+  background:var(--surface2); border:1px solid var(--border); border-radius:7px;
+  color:var(--text); font-family:var(--font); font-size:12px; padding:8px 10px;
+  outline:none; transition:border-color .2s; width:100%;
+  color-scheme: dark;
+}
+.schedule-field input[type=datetime-local]:focus { border-color:var(--accent); }
+
+.poll-status-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:9px; font-weight:800; letter-spacing:.15em; text-transform:uppercase;
+  padding:3px 8px; border-radius:3px;
+}
+.poll-status-badge.scheduled { background:rgba(92,170,255,.15); color:#5caaff; border:1px solid rgba(92,170,255,.3); }
+.poll-status-badge.active    { background:rgba(52,211,153,.12); color:#34d399; border:1px solid rgba(52,211,153,.3); }
+.poll-status-badge.ended     { background:rgba(255,60,60,.1);   color:rgba(255,100,100,.8); border:1px solid rgba(255,60,60,.2); }
+.poll-status-badge.draft     { background:rgba(255,255,255,.05); color:var(--muted); border:1px solid var(--border); }
+
+/* ── ARCHIVE VIEW ────────────────────────────────── */
+#view-archive {
+  flex-direction:column; min-height:100vh; background:var(--bg);
+}
+.archive-header {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:0 28px; height:50px; display:flex; align-items:center; gap:16px;
+  flex-shrink:0;
+}
+.archive-title { font-size:14px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); }
+.archive-title span { color:var(--muted); font-weight:400; }
+.archive-back {
+  margin-left:auto; padding:6px 14px; border-radius:6px; border:1px solid var(--border);
+  color:var(--muted); font-family:var(--font); font-size:10px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; cursor:pointer; background:none; transition:all .18s;
+}
+.archive-back:hover { color:var(--text); border-color:var(--border2); background:var(--surface2); }
+
+.archive-body { flex:1; padding:28px; overflow-y:auto; }
+.archive-summary {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px;
+}
+.archive-stat {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:16px 18px;
+}
+.archive-stat-num  { font-size:28px; font-weight:900; color:var(--accent); line-height:1; }
+.archive-stat-lbl  { font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-top:4px; }
+
+.archive-filters {
+  display:flex; gap:8px; margin-bottom:16px; align-items:center; flex-wrap:wrap;
+}
+.archive-filter-btn {
+  padding:6px 14px; border-radius:6px; border:1px solid var(--border);
+  background:none; color:var(--muted); font-family:var(--font); font-size:10px;
+  font-weight:700; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:all .18s;
+}
+.archive-filter-btn:hover { border-color:var(--border2); color:var(--text); }
+.archive-filter-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(0,137,208,.08); }
+.archive-search {
+  margin-left:auto; background:var(--surface2); border:1px solid var(--border);
+  border-radius:7px; color:var(--text); font-family:var(--font); font-size:12px;
+  padding:7px 12px; outline:none; transition:border-color .2s; width:220px;
+}
+.archive-search:focus { border-color:var(--accent); }
+.archive-search::placeholder { color:var(--muted); }
+
+.archive-table {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+}
+.archive-table-header {
+  display:grid; grid-template-columns:2fr 3fr 1fr 1fr 1fr 130px;
+  padding:10px 18px; border-bottom:1px solid var(--border);
+  font-size:9px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--muted);
+}
+.archive-row {
+  display:grid; grid-template-columns:2fr 3fr 1fr 1fr 1fr 130px;
+  padding:14px 18px; border-bottom:1px solid var(--border);
+  align-items:center; gap:8px; transition:background .15s;
+}
+.archive-row:last-child { border-bottom:none; }
+.archive-row:hover { background:var(--surface2); }
+.archive-row-title { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.archive-row-question { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.archive-row-votes { font-size:14px; font-weight:800; color:var(--text); }
+.archive-row-date  { font-size:10px; color:var(--muted); letter-spacing:.04em; }
+.archive-row-actions { display:flex; gap:5px; }
+.arch-btn {
+  padding:5px 9px; border-radius:5px; border:1px solid var(--border);
+  background:none; color:var(--muted); font-family:var(--font); font-size:9px;
+  font-weight:700; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:all .15s;
+}
+.arch-btn:hover { color:var(--text); border-color:var(--border2); background:var(--surface2); }
+.arch-btn.reload { border-color:rgba(0,137,208,.35); color:var(--nbc-blue); }
+.arch-btn.reload:hover { background:rgba(0,137,208,.1); }
+.arch-btn.del { border-color:rgba(255,60,60,.3); color:rgba(255,80,80,.7); }
+.arch-btn.del:hover { background:rgba(255,60,60,.08); border-color:var(--nbc-red); color:var(--nbc-red); }
+
+.archive-empty {
+  padding:60px; text-align:center;
+  font-size:13px; color:var(--muted); letter-spacing:.06em;
+}
+
+/* expanded row results bar */
+.archive-results-row {
+  grid-column:1/-1; display:none; flex-direction:column; gap:6px;
+  padding:10px 0 4px; border-top:1px solid var(--border); margin-top:6px;
+}
+.archive-results-row.open { display:flex; }
+.arch-result-bar-wrap { display:flex; align-items:center; gap:10px; }
+.arch-result-lbl { font-size:11px; font-weight:600; color:var(--muted); width:100px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.arch-result-track { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.arch-result-fill  { height:100%; border-radius:3px; transition:width .6s ease; }
+.arch-result-pct   { font-size:11px; font-weight:700; color:var(--text); width:38px; text-align:right; }
+.arch-result-votes { font-size:10px; color:var(--muted); width:60px; text-align:right; }
+
+/* unique url display */
+.poll-url-block {
+  background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+  padding:10px 14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+}
+.poll-url-item { display:flex; flex-direction:column; gap:3px; flex:1; min-width:180px; }
+.poll-url-label { font-size:9px; color:var(--muted); letter-spacing:.12em; text-transform:uppercase; }
+.poll-url-value {
+  font-size:11px; color:var(--accent); font-weight:600; letter-spacing:.03em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer;
+}
+.poll-url-value:hover { text-decoration:underline; }
+.copy-url-btn {
+  padding:6px 10px; border-radius:6px; border:1px solid var(--border);
+  background:none; color:var(--muted); font-family:var(--font); font-size:9px;
+  font-weight:700; letter-spacing:.08em; text-transform:uppercase; cursor:pointer;
+  transition:all .18s; flex-shrink:0; align-self:flex-end;
+}
+.copy-url-btn:hover { color:var(--accent); border-color:var(--accent); }
 </style>
 </head>
 <body>
@@ -711,6 +849,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
       <button class="nb" onclick="openView('poll')">↗ Widget</button>
       <button class="nb" onclick="openView('lower-third')">↗ Lower Third</button>
       <button class="nb" onclick="openView('results')">↗ Full Results</button>
+      <button class="nb" onclick="goArchive()">📋 Archive</button>
       <button class="nb go" onclick="navTake()">▶ Take Lower Third</button>
     </div>
   </nav>
@@ -810,6 +949,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
       <div class="ctrl-section">
         <div class="ctrl-heading">Poll Builder</div>
         <div>
+          <label class="ctrl-label">Internal Title</label>
+          <input class="ctrl-input" id="builder-title" placeholder="e.g. Celtics MVP — Game 3" oninput="liveTitle()">
+        </div>
+        <div>
           <label class="ctrl-label">Question</label>
           <input class="ctrl-input" id="builder-q" value="Who is the Celtics MVP this season?" oninput="liveQ()">
         </div>
@@ -818,6 +961,16 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
           <div class="opt-builder-list" id="builder-opts"></div>
           <button class="add-opt-btn" onclick="addOpt()">+ Add option</button>
         </div>
+        <div class="schedule-grid">
+          <div class="schedule-field">
+            <label>Start (opens voting)</label>
+            <input type="datetime-local" id="builder-start">
+          </div>
+          <div class="schedule-field">
+            <label>End (auto-closes)</label>
+            <input type="datetime-local" id="builder-end">
+          </div>
+        </div>
         <div class="btn-row">
           <button class="cb go"   onclick="launchPoll()">Launch Poll</button>
           <button class="cb"      onclick="duplicatePoll()">Duplicate</button>
@@ -825,6 +978,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
         </div>
         <div class="btn-row">
           <button class="cb" onclick="newPoll()">+ New Poll</button>
+        </div>
+        <div>
+          <label class="ctrl-label">Unique Poll URLs</label>
+          <div class="poll-url-block" id="poll-url-block"></div>
         </div>
       </div>
 
@@ -899,6 +1056,33 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
   </div>
 </div>
 
+<!-- ═══════════════════════════
+     ARCHIVE  ?view=archive
+════════════════════════════ -->
+<div id="view-archive" class="view">
+  <div class="archive-header">
+    <div class="archive-title">NBC Sports <span>Boston · Poll Archive</span></div>
+    <button class="archive-back" onclick="goBack()">← Back to Dashboard</button>
+  </div>
+  <div class="archive-body">
+    <div class="archive-summary" id="archive-summary"></div>
+    <div class="archive-filters">
+      <button class="archive-filter-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+      <button class="archive-filter-btn" data-filter="active"    onclick="setFilter('active',this)">Active</button>
+      <button class="archive-filter-btn" data-filter="scheduled" onclick="setFilter('scheduled',this)">Scheduled</button>
+      <button class="archive-filter-btn" data-filter="ended"     onclick="setFilter('ended',this)">Ended</button>
+      <button class="archive-filter-btn" data-filter="draft"     onclick="setFilter('draft',this)">Draft</button>
+      <input class="archive-search" id="archive-search" placeholder="Search polls…" oninput="renderArchive()">
+    </div>
+    <div class="archive-table">
+      <div class="archive-table-header">
+        <div>Title</div><div>Question</div><div>Votes</div><div>Status</div><div>Created</div><div>Actions</div>
+      </div>
+      <div id="archive-rows"></div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -914,50 +1098,149 @@ const PRESETS = {
   'Patriots':   { accent:'#002244', glass:'rgba(0,5,20,0.95)'   },
   'Breaking':   { accent:'#E31837', glass:'rgba(20,0,0,0.94)'   },
 };
+const BASE_URL = location.origin + location.pathname;
 
 // ═══════════════════════════════════════════
-//  STATE
+//  UID GENERATOR
 // ═══════════════════════════════════════════
-let polls = [{
-  id:1, name:'Celtics Poll',
-  question:'Who is the Celtics MVP this season?',
-  options:[
-    { label:'Tatum',     votes:0, imgSrc:null },
-    { label:'Brown',     votes:0, imgSrc:null },
-    { label:'White',     votes:0, imgSrc:null },
-    { label:'Porzingis', votes:0, imgSrc:null },
-  ],
-  selected:null, hasVoted:false, closed:false,
-}];
-let activePollId = 1;
-let nextPollId   = 2;
-let ltVisible = false;
-let fsVisible = false;
-let accent = '#0089D0';
-let keyword = 'Viewer\nVote';
-let ticker  = 'nbcsportsboston.com/poll';
-let logoSrc = null;   // uploaded logo data URL
-let qrSrc   = null;   // uploaded QR data URL
+function genUID() {
+  return Math.random().toString(36).slice(2,8);
+}
+
+// ═══════════════════════════════════════════
+//  STATE  (loaded from / saved to localStorage)
+// ═══════════════════════════════════════════
+function defaultPolls() {
+  return [{
+    id:1, uid:genUID(), name:'Celtics Poll', title:'Celtics MVP — Opening Night',
+    question:'Who is the Celtics MVP this season?',
+    options:[
+      { label:'Tatum',     votes:0, imgSrc:null },
+      { label:'Brown',     votes:0, imgSrc:null },
+      { label:'White',     votes:0, imgSrc:null },
+      { label:'Porzingis', votes:0, imgSrc:null },
+    ],
+    selected:null, hasVoted:false, closed:false,
+    startAt:null, endAt:null, createdAt: new Date().toISOString(),
+  }];
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('pollcast_v3');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+function saveState() {
+  try {
+    localStorage.setItem('pollcast_v3', JSON.stringify({
+      polls, activePollId, nextPollId, accent, keyword, ticker, logoSrc, qrSrc,
+    }));
+  } catch(e) {
+    // localStorage might be full (images) — store without images
+    try {
+      const lite = polls.map(p=>({...p, options:p.options.map(o=>({...o,imgSrc:null}))}));
+      localStorage.setItem('pollcast_v3', JSON.stringify({
+        polls:lite, activePollId, nextPollId, accent, keyword, ticker, logoSrc:null, qrSrc:null,
+      }));
+    } catch(e2) {}
+  }
+}
+
+const saved = loadState();
+let polls        = saved?.polls        || defaultPolls();
+let activePollId = saved?.activePollId || polls[0].id;
+let nextPollId   = saved?.nextPollId   || 2;
+let ltVisible    = false;
+let fsVisible    = false;
+let accent       = saved?.accent       || '#0089D0';
+let keyword      = saved?.keyword      || 'Viewer\nVote';
+let ticker       = saved?.ticker       || 'nbcsportsboston.com/poll';
+let logoSrc      = saved?.logoSrc      || null;
+let qrSrc        = saved?.qrSrc        || null;
 let streamInterval = null;
 let streaming = false;
 let lastVoteCounts = {};
-let builderOpts = ['Tatum','Brown','White','Porzingis'];
-let builderOptImages = [null,null,null,null]; // parallel to builderOpts
+let builderOpts = [];
+let builderOptImages = [];
+let archiveFilter = 'all';
 
 // ═══════════════════════════════════════════
 //  ROUTING
 // ═══════════════════════════════════════════
 function route() {
-  const v = new URLSearchParams(location.search).get('view') || 'dashboard';
+  // check URL param for poll UID (for embedded/tv views)
+  const params = new URLSearchParams(location.search);
+  const uid = params.get('poll');
+  if (uid) {
+    const match = polls.find(p=>p.uid===uid);
+    if (match) activePollId = match.id;
+  }
+
+  const v = params.get('view') || 'dashboard';
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   const el = document.getElementById('view-' + v);
   if (el) el.classList.add('active');
   if (v==='lower-third') { renderLT(); setTimeout(ltShow, 600); }
   if (v==='results')     { renderFS(); setTimeout(fsShow, 400); }
   if (v==='poll')        renderPollWidget();
-  if (v==='dashboard')   { renderAll(); buildDash(); }
+  if (v==='archive')     { renderArchiveSummary(); renderArchive(); }
+  if (v==='dashboard')   { renderAll(); buildDash(); startScheduleTicker(); }
 }
-function openView(v) { window.open(location.pathname+'?view='+v,'_blank'); }
+function openView(v) {
+  const p = activePoll();
+  const uid = p ? `&poll=${p.uid}` : '';
+  window.open(`${location.pathname}?view=${v}${uid}`,'_blank');
+}
+function goArchive() {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-archive').classList.add('active');
+  renderArchiveSummary(); renderArchive();
+}
+function goBack() {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-dashboard').classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+//  SCHEDULE TICKER  (checks every 15s)
+// ═══════════════════════════════════════════
+function startScheduleTicker() {
+  checkSchedule();
+  setInterval(checkSchedule, 15000);
+}
+function checkSchedule() {
+  const now = new Date();
+  let changed = false;
+  polls.forEach(p => {
+    // auto-open
+    if (p.startAt && !p.closed && new Date(p.startAt) <= now) {
+      // just means voting is open — no special action needed
+    }
+    // auto-close
+    if (p.endAt && !p.closed && new Date(p.endAt) <= now) {
+      p.closed = true; changed = true;
+      if (p.id === activePollId) showToast(`"${p.title||p.name}" has ended`);
+    }
+  });
+  if (changed) { saveState(); renderAll(); buildSwitcher(); }
+}
+
+// ═══════════════════════════════════════════
+//  POLL STATUS HELPER
+// ═══════════════════════════════════════════
+function pollStatus(p) {
+  const now = new Date();
+  if (p.closed) return 'ended';
+  if (!p.question) return 'draft';
+  if (p.startAt && new Date(p.startAt) > now) return 'scheduled';
+  if (p.endAt && new Date(p.endAt) <= now) return 'ended';
+  return 'active';
+}
+function statusLabel(s) {
+  return { active:'Active', scheduled:'Scheduled', ended:'Ended', draft:'Draft' }[s] || s;
+}
 
 // ═══════════════════════════════════════════
 //  ACTIVE POLL
@@ -989,15 +1272,11 @@ function renderPollWidget() {
   document.getElementById('pw-total').textContent = total;
   document.getElementById('pw-closed').style.display = p.closed?'block':'none';
 
-  // QR block
   const qrBox = document.getElementById('pw-qr-box');
-  const qrPh  = qrBox.querySelector('.poll-qr-placeholder');
   if (qrSrc) {
     qrBox.innerHTML = `<img src="${qrSrc}" style="width:100%;height:100%;object-fit:contain;">`;
-  } else {
-    if (!qrBox.querySelector('.poll-qr-placeholder')) {
-      qrBox.innerHTML = `<div class="poll-qr-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/></svg>Scan<br>to vote</div>`;
-    }
+  } else if (!qrBox.querySelector('.poll-qr-placeholder')) {
+    qrBox.innerHTML = `<div class="poll-qr-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/></svg>Scan<br>to vote</div>`;
   }
   document.getElementById('pw-qr-url').textContent = ticker;
 
@@ -1012,9 +1291,7 @@ function renderPollWidget() {
     div.className = 'poll-option'+(isSel?' selected':'')+(isWinner?' winner':'');
     div.id = `pw-opt-${i}`;
     if (!p.hasVoted&&!p.closed) div.onclick=()=>{p.selected=i;renderPollWidget();};
-    const imgHtml = opt.imgSrc
-      ? `<img class="opt-img" src="${opt.imgSrc}" alt="${opt.label}">`
-      : '';
+    const imgHtml = opt.imgSrc ? `<img class="opt-img" src="${opt.imgSrc}" alt="${opt.label}">` : '';
     div.innerHTML = `
       <div class="opt-bar" style="width:${pct}%;background:linear-gradient(90deg,${color}1a,${color}08)"></div>
       <div class="opt-surge-overlay" id="pw-surge-${i}"></div>
@@ -1044,55 +1321,44 @@ function renderPollWidget() {
 function castVote() {
   const p=activePoll(); if(!p||p.selected===null||p.hasVoted||p.closed) return;
   p.options[p.selected].votes++; p.hasVoted=true;
-  renderAll(); showToast('Vote recorded!');
+  saveState(); renderAll(); showToast('Vote recorded!');
 }
 
 // ═══════════════════════════════════════════
-//  LOWER THIRD RENDER
+//  LOWER THIRD RENDER  (images fixed)
 // ═══════════════════════════════════════════
 function renderLT(surgingIndices=[]) {
   const p=activePoll(); if(!p) return;
   const total=p.options.reduce((s,o)=>s+o.votes,0);
   const maxV =Math.max(...p.options.map(o=>o.votes),1);
 
-  // logo
   const ltLogoImg  = document.getElementById('lt-logo-img');
   const ltLogoText = document.getElementById('lt-logo-text');
   if (ltLogoImg && ltLogoText) {
-    if (logoSrc) {
-      ltLogoImg.src=logoSrc; ltLogoImg.style.display='block';
-      ltLogoText.style.display='none';
-    } else {
-      ltLogoImg.style.display='none'; ltLogoText.style.display='flex';
-    }
+    if (logoSrc) { ltLogoImg.src=logoSrc; ltLogoImg.style.display='block'; ltLogoText.style.display='none'; }
+    else { ltLogoImg.style.display='none'; ltLogoText.style.display='flex'; }
   }
 
-  // keyword
   const kwEl=document.getElementById('lt-keyword');
   if(kwEl) kwEl.innerHTML=keyword.replace('\n','<br>');
 
-  // ticker
   const tk=document.getElementById('lt-ticker'); if(tk) tk.textContent=ticker;
 
-  // vote count
   const vcEl=document.getElementById('lt-votecount');
   if(vcEl){
     vcEl.textContent=total.toLocaleString();
     if(surgingIndices.length>0){vcEl.classList.add('flash');setTimeout(()=>vcEl.classList.remove('flash'),400);}
   }
 
-  // QR
   const ltQrBox=document.getElementById('lt-qr-box');
-  const ltQrPh =document.getElementById('lt-qr-placeholder');
   if(ltQrBox){
     if(qrSrc){
       ltQrBox.innerHTML=`<img src="${qrSrc}" style="width:100%;height:100%;object-fit:contain;">`;
     } else {
-      ltQrBox.innerHTML=`<div class="lt-qr-placeholder" id="lt-qr-placeholder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/></svg>QR</div>`;
+      ltQrBox.innerHTML=`<div class="lt-qr-placeholder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/></svg>QR</div>`;
     }
   }
 
-  // bars with images
   const barsEl=document.getElementById('lt-bars'); if(!barsEl) return;
   barsEl.innerHTML='';
   p.options.slice(0,5).forEach((opt,i)=>{
@@ -1101,7 +1367,12 @@ function renderLT(surgingIndices=[]) {
     const isSurging=surgingIndices.includes(i);
     const item=document.createElement('div');
     item.className='lt-opt-item'+(isLeader?' leader':'')+(isSurging?' surging':'');
-    const imgHtml=opt.imgSrc?`<img class="lt-opt-img" src="${opt.imgSrc}" style="display:block;" alt="">`:'' ;
+
+    // FIX: use inline style display:block to override CSS display:none default
+    const imgHtml = opt.imgSrc
+      ? `<img src="${opt.imgSrc}" alt="${opt.label}" style="width:28px;height:28px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,.15);display:block;">`
+      : '';
+
     item.innerHTML=`
       <div class="lt-opt-img-wrap">
         ${imgHtml}
@@ -1136,7 +1407,6 @@ function renderFS() {
   const total=p.options.reduce((s,o)=>s+o.votes,0);
   const maxV =Math.max(...p.options.map(o=>o.votes),1);
 
-  // logo
   const fsBadgeLogo=document.getElementById('fs-badge-logo');
   const fsBadgeText=document.getElementById('fs-badge-text');
   if(fsBadgeLogo&&fsBadgeText){
@@ -1150,14 +1420,10 @@ function renderFS() {
   const vnEl =document.getElementById('fs-votes-num'); if(vnEl) vnEl.textContent=total.toLocaleString();
   const tkEl =document.getElementById('fs-ticker'); if(tkEl) tkEl.textContent=ticker;
 
-  // QR
   const fsQrBox=document.getElementById('fs-qr-box');
   if(fsQrBox){
-    if(qrSrc){
-      fsQrBox.innerHTML=`<img src="${qrSrc}" style="width:100%;height:100%;object-fit:contain;">`;
-    } else {
-      fsQrBox.innerHTML=`<div class="fs-qr-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/></svg></div>`;
-    }
+    if(qrSrc){ fsQrBox.innerHTML=`<img src="${qrSrc}" style="width:100%;height:100%;object-fit:contain;">`; }
+    else{ fsQrBox.innerHTML=`<div class="fs-qr-placeholder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none"/><rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 17v3"/></svg></div>`; }
   }
 
   const resultsEl=document.getElementById('fs-results'); if(!resultsEl) return;
@@ -1169,9 +1435,9 @@ function renderFS() {
     const color=COLORS[p.options.indexOf(opt)%COLORS.length];
     const row=document.createElement('div');
     row.className='fs-row'+(isWinner?' winner':'');
-    const imgHtml=opt.imgSrc
-      ?`<img class="fs-opt-img" src="${opt.imgSrc}" style="display:block;" alt="${opt.label}">`
-      :`<div class="fs-opt-img-placeholder" style="display:${opt.imgSrc===null&&p.options.some(o=>o.imgSrc)?'block':'none'}"></div>`;
+    const imgHtml = opt.imgSrc
+      ? `<img class="fs-opt-img" src="${opt.imgSrc}" style="display:block;" alt="${opt.label}">`
+      : `<div class="fs-opt-img-placeholder" style="${p.options.some(o=>o.imgSrc)?'display:block':'display:none'}"></div>`;
     row.innerHTML=`
       ${imgHtml}
       <div class="fs-row-label">${opt.label}<span class="fs-winner-crown">★ Leading</span></div>
@@ -1194,7 +1460,7 @@ function fsHide() {
 }
 
 // ═══════════════════════════════════════════
-//  MINI PREVIEW RENDERS
+//  MINI PREVIEWS
 // ═══════════════════════════════════════════
 function renderMiniPoll() {
   const p=activePoll(); if(!p) return;
@@ -1212,8 +1478,9 @@ function renderMiniPoll() {
     const imgHtml=opt.imgSrc?`<img class="mini-opt-img" src="${opt.imgSrc}" style="display:block;" alt="">`:'' ;
     div.innerHTML=`
       <div class="mini-opt-bar" style="width:${pct}%;background:${color}18"></div>
-      <div class="mini-opt-body">${imgHtml}<span>${opt.label}</span><span class="mini-opt-pct" style="${isLeader?`color:${color}`:''}">
-        ${total>0?pct+'%':'–'}</span></div>`;
+      <div class="mini-opt-body">${imgHtml}<span>${opt.label}</span>
+        <span class="mini-opt-pct" style="${isLeader?`color:${color}`:''}">
+          ${total>0?pct+'%':'–'}</span></div>`;
     c.appendChild(div);
   });
 }
@@ -1222,14 +1489,12 @@ function renderMiniLT() {
   const p=activePoll(); if(!p) return;
   const total=p.options.reduce((s,o)=>s+o.votes,0);
   const maxV =Math.max(...p.options.map(o=>o.votes),1);
-  // logo
   const miniLtLogo=document.getElementById('mini-lt-logo');
   const miniLtKw  =document.getElementById('mini-lt-kw');
   if(miniLtLogo&&miniLtKw){
     if(logoSrc){miniLtLogo.src=logoSrc;miniLtLogo.style.display='block';miniLtKw.style.display='none';}
     else{miniLtLogo.style.display='none';miniLtKw.style.display='block';}
   }
-  // QR
   const miniLtQrBox=document.getElementById('mini-lt-qr-box');
   if(miniLtQrBox){
     if(qrSrc) miniLtQrBox.innerHTML=`<img src="${qrSrc}" style="width:100%;height:100%;object-fit:contain;">`;
@@ -1255,14 +1520,12 @@ function renderMiniFS() {
   const p=activePoll(); if(!p) return;
   const total=p.options.reduce((s,o)=>s+o.votes,0);
   const maxV =Math.max(...p.options.map(o=>o.votes),1);
-  // logo
   const miniFsLogo=document.getElementById('mini-fs-logo');
   const miniFsKw  =document.getElementById('mini-fs-kw');
   if(miniFsLogo&&miniFsKw){
     if(logoSrc){miniFsLogo.src=logoSrc;miniFsLogo.style.display='block';miniFsKw.style.display='none';}
     else{miniFsLogo.style.display='none';miniFsKw.style.display='block';}
   }
-  // QR
   const miniFsQrBox=document.getElementById('mini-fs-qr-box');
   if(miniFsQrBox){
     if(qrSrc) miniFsQrBox.innerHTML=`<img src="${qrSrc}" style="width:100%;height:100%;object-fit:contain;">`;
@@ -1299,74 +1562,37 @@ function renderAll(surging=[]) {
 }
 
 // ═══════════════════════════════════════════
-//  LOGO UPLOAD
+//  UNIQUE POLL URLS
 // ═══════════════════════════════════════════
-function handleLogoUpload(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    logoSrc=ev.target.result;
-    const img=document.getElementById('logo-preview-img');
-    const ph =document.getElementById('logo-preview-ph');
-    if(img){img.src=logoSrc;img.style.display='block';}
-    if(ph) ph.style.display='none';
-    renderAll(); showToast('Logo uploaded');
-  };
-  reader.readAsDataURL(file);
-}
-function clearLogo() {
-  logoSrc=null;
-  const img=document.getElementById('logo-preview-img');
-  const ph =document.getElementById('logo-preview-ph');
-  if(img){img.src='';img.style.display='none';}
-  if(ph) ph.style.display='block';
-  renderAll(); showToast('Logo cleared');
-}
-
-// ═══════════════════════════════════════════
-//  QR UPLOAD
-// ═══════════════════════════════════════════
-function handleQRUpload(e) {
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    qrSrc=ev.target.result;
-    const img=document.getElementById('qr-preview-img');
-    const ph =document.getElementById('qr-preview-ph');
-    if(img){img.src=qrSrc;img.style.display='block';}
-    if(ph) ph.style.display='none';
-    renderAll(); showToast('QR code uploaded');
-  };
-  reader.readAsDataURL(file);
-}
-function clearQR() {
-  qrSrc=null;
-  const img=document.getElementById('qr-preview-img');
-  const ph =document.getElementById('qr-preview-ph');
-  if(img){img.src='';img.style.display='none';}
-  if(ph) ph.style.display='block';
-  renderAll(); showToast('QR cleared');
+function renderPollUrls() {
+  const block = document.getElementById('poll-url-block'); if(!block) return;
+  const p = activePoll(); if(!p) { block.innerHTML=''; return; }
+  const uid = p.uid || '';
+  const widgetUrl = `${BASE_URL}?view=poll&poll=${uid}`;
+  const ltUrl     = `${BASE_URL}?view=lower-third&poll=${uid}`;
+  const fsUrl     = `${BASE_URL}?view=results&poll=${uid}`;
+  block.innerHTML = `
+    <div class="poll-url-item">
+      <div class="poll-url-label">Widget / Fan Vote</div>
+      <div class="poll-url-value" title="${widgetUrl}" onclick="copyUrl('${widgetUrl}')">${widgetUrl}</div>
+    </div>
+    <div class="poll-url-item">
+      <div class="poll-url-label">Lower Third (OBS)</div>
+      <div class="poll-url-value" title="${ltUrl}" onclick="copyUrl('${ltUrl}')">${ltUrl}</div>
+    </div>
+    <div class="poll-url-item">
+      <div class="poll-url-label">Full Results (OBS)</div>
+      <div class="poll-url-value" title="${fsUrl}" onclick="copyUrl('${fsUrl}')">${fsUrl}</div>
+    </div>
+    <button class="copy-url-btn" onclick="copyUrl('${widgetUrl}')">Copy Widget</button>`;
 }
 
-// ═══════════════════════════════════════════
-//  OPTION IMAGE UPLOAD
-// ═══════════════════════════════════════════
-function handleOptImageUpload(e, idx) {
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    builderOptImages[idx]=ev.target.result;
-    // update thumb in builder row
-    const btn=document.querySelector(`.opt-img-upload-btn[data-idx="${idx}"]`);
-    if(btn){
-      const thumb=btn.querySelector('.thumb');
-      const icon =btn.querySelector('svg');
-      if(thumb){thumb.src=ev.target.result;thumb.style.display='block';}
-      if(icon) icon.style.display='none';
-    }
-    showToast('Image added to option');
-  };
-  reader.readAsDataURL(file);
+function copyUrl(url) {
+  navigator.clipboard.writeText(url).then(()=>showToast('URL copied!')).catch(()=>{
+    const el = document.createElement('textarea');
+    el.value=url; document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el); showToast('URL copied!');
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -1375,77 +1601,112 @@ function handleOptImageUpload(e, idx) {
 function renderBuilderOpts() {
   const list=document.getElementById('builder-opts'); if(!list) return;
   list.innerHTML='';
-  // ensure image array length matches
   while(builderOptImages.length<builderOpts.length) builderOptImages.push(null);
-
   builderOpts.forEach((opt,i)=>{
     const row=document.createElement('div');
     row.className='opt-row';
-    const hasThumbnail = !!builderOptImages[i];
+    const hasImg=!!builderOptImages[i];
     row.innerHTML=`
       <div class="opt-img-upload-btn" data-idx="${i}" title="Upload image for this option">
         <input type="file" accept="image/*" onchange="handleOptImageUpload(event,${i})">
-        ${hasThumbnail
+        ${hasImg
           ? `<img class="thumb" src="${builderOptImages[i]}" style="display:block;">`
-          : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a6080" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="#3a6080"/><path d="M21 15l-5-5L5 21"/></svg>`
-        }
+          : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3a6080" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="#3a6080"/><path d="M21 15l-5-5L5 21"/></svg>`}
       </div>
-      <input type="text" value="${opt}" placeholder="Option ${i+1}" oninput="builderOpts[${i}]=this.value">
+      <input type="text" value="${opt}" placeholder="Option ${i+1}" oninput="builderOpts[${i}]=this.value;liveQ()">
       <button class="del-btn" onclick="delOpt(${i})">×</button>`;
     list.appendChild(row);
   });
 }
 
-function addOpt() {
-  if(builderOpts.length>=6){showToast('Max 6 options');return;}
-  builderOpts.push(''); builderOptImages.push(null);
+function syncBuilderFromPoll(p) {
+  const qInput = document.getElementById('builder-q');
+  const tInput = document.getElementById('builder-title');
+  const sInput = document.getElementById('builder-start');
+  const eInput = document.getElementById('builder-end');
+  if(qInput) qInput.value = p.question || '';
+  if(tInput) tInput.value = p.title || '';
+  if(sInput) sInput.value = p.startAt ? toLocalDatetimeInput(p.startAt) : '';
+  if(eInput) eInput.value = p.endAt   ? toLocalDatetimeInput(p.endAt)   : '';
+  builderOpts = p.options.map(o=>o.label);
+  builderOptImages = p.options.map(o=>o.imgSrc||null);
   renderBuilderOpts();
-  document.querySelectorAll('.opt-row input[type=text]').item(builderOpts.length-1)?.focus();
 }
 
+function toLocalDatetimeInput(iso) {
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function addOpt() {
+  if(builderOpts.length>=6){showToast('Max 6 options');return;}
+  builderOpts.push(''); builderOptImages.push(null); renderBuilderOpts();
+  document.querySelectorAll('.opt-row input[type=text]').item(builderOpts.length-1)?.focus();
+}
 function delOpt(i) {
   if(builderOpts.length<=2){showToast('Min 2 options');return;}
-  builderOpts.splice(i,1); builderOptImages.splice(i,1);
-  renderBuilderOpts();
+  builderOpts.splice(i,1); builderOptImages.splice(i,1); renderBuilderOpts();
+}
+
+function liveTitle() {
+  const v=document.getElementById('builder-title')?.value||'';
+  const p=activePoll(); if(p){ p.title=v; p.name=v||p.question.slice(0,22)||`Poll ${p.id}`; }
+  buildSwitcher();
 }
 
 function liveQ() {
   const v=document.getElementById('builder-q')?.value||'';
-  const p=activePoll(); if(p) p.question=v; renderAll();
+  const p=activePoll(); if(p) p.question=v;
+  renderAll(); renderPollUrls();
 }
 
 function launchPoll() {
-  const q=document.getElementById('builder-q')?.value.trim();
-  const valid=builderOpts.map((label,i)=>({label:label.trim(),img:builderOptImages[i]})).filter(o=>o.label);
+  const q     = document.getElementById('builder-q')?.value.trim();
+  const title = document.getElementById('builder-title')?.value.trim();
+  const startV= document.getElementById('builder-start')?.value;
+  const endV  = document.getElementById('builder-end')?.value;
+  const valid = builderOpts.map((label,i)=>({label:label.trim(),img:builderOptImages[i]})).filter(o=>o.label);
   if(!q){showToast('Enter a question');return;}
   if(valid.length<2){showToast('Need 2+ options');return;}
+  if(endV && startV && new Date(endV)<=new Date(startV)){showToast('End must be after start');return;}
+
   const p=activePoll(); if(!p) return;
   p.question=q;
+  p.title=title||q.slice(0,30);
+  p.name=p.title;
   p.options=valid.map(o=>({label:o.label,votes:0,imgSrc:o.img||null}));
   p.selected=null; p.hasVoted=false; p.closed=false;
-  p.name=q.slice(0,22)+(q.length>22?'…':'');
-  buildSwitcher(); buildSimGrid(); renderAll();
+  p.startAt=startV ? new Date(startV).toISOString() : null;
+  p.endAt  =endV   ? new Date(endV).toISOString()   : null;
+  p.createdAt = p.createdAt || new Date().toISOString();
+
+  saveState(); buildSwitcher(); buildSimGrid(); renderAll(); renderPollUrls();
   showToast('Poll launched!');
 }
 
 function newPoll() {
-  const id=nextPollId++;
-  polls.push({id,name:`Poll ${id}`,question:'',options:[{label:'Option A',votes:0,imgSrc:null},{label:'Option B',votes:0,imgSrc:null}],selected:null,hasVoted:false,closed:false});
-  builderOpts=['Option A','Option B']; builderOptImages=[null,null];
-  const qInput=document.getElementById('builder-q'); if(qInput) qInput.value='';
-  activePollId=id; buildSwitcher(); renderBuilderOpts(); buildSimGrid(); renderAll();
+  const id=nextPollId++; const uid=genUID();
+  polls.push({id,uid,name:`Poll ${id}`,title:'',question:'',
+    options:[{label:'Option A',votes:0,imgSrc:null},{label:'Option B',votes:0,imgSrc:null}],
+    selected:null,hasVoted:false,closed:false,
+    startAt:null,endAt:null,createdAt:new Date().toISOString()});
+  activePollId=id;
+  syncBuilderFromPoll(activePoll());
+  saveState(); buildSwitcher(); buildSimGrid(); renderAll(); renderPollUrls();
   showToast('New poll created');
   document.getElementById('builder-q')?.focus();
 }
 
 function duplicatePoll() {
   const p=activePoll(); if(!p) return;
-  const id=nextPollId++;
-  polls.push({id,name:p.name+' (copy)',question:p.question,
-    options:p.options.map(o=>({...o,votes:0})),selected:null,hasVoted:false,closed:false});
-  builderOpts=p.options.map(o=>o.label);
-  builderOptImages=p.options.map(o=>o.imgSrc||null);
-  activePollId=id; buildSwitcher(); renderBuilderOpts(); buildSimGrid(); renderAll();
+  const id=nextPollId++; const uid=genUID();
+  polls.push({...p,id,uid,name:p.name+' (copy)',title:(p.title||p.name)+' (copy)',
+    options:p.options.map(o=>({...o,votes:0})),selected:null,hasVoted:false,closed:false,
+    createdAt:new Date().toISOString()});
+  activePollId=id;
+  syncBuilderFromPoll(activePoll());
+  saveState(); buildSwitcher(); renderBuilderOpts(); buildSimGrid(); renderAll(); renderPollUrls();
   showToast('Poll duplicated');
 }
 
@@ -1453,7 +1714,9 @@ function deletePoll() {
   if(polls.length===1){showToast('Cannot delete last poll');return;}
   const idx=polls.findIndex(p=>p.id===activePollId);
   polls.splice(idx,1); activePollId=polls[Math.max(0,idx-1)].id;
-  switchPoll(activePollId); showToast('Poll deleted');
+  syncBuilderFromPoll(activePoll());
+  saveState(); buildSwitcher(); buildSimGrid(); renderAll(); renderPollUrls();
+  showToast('Poll deleted');
 }
 
 // ═══════════════════════════════════════════
@@ -1463,9 +1726,10 @@ function buildSwitcher() {
   const bar=document.getElementById('poll-switcher'); if(!bar) return;
   bar.innerHTML='';
   polls.forEach(p=>{
+    const status=pollStatus(p);
     const btn=document.createElement('button');
-    btn.className='poll-tab'+(p.id===activePollId?' active':'');
-    btn.textContent=p.name;
+    btn.className='poll-tab'+(p.id===activePollId?' active':'')+(p.closed?' on-air':'');
+    btn.innerHTML=`${p.title||p.name||`Poll ${p.id}`} <span class="poll-status-badge ${status}" style="font-size:7px;padding:1px 5px;">${statusLabel(status)}</span>`;
     btn.onclick=()=>switchPoll(p.id);
     bar.appendChild(btn);
   });
@@ -1477,10 +1741,127 @@ function buildSwitcher() {
 function switchPoll(id) {
   activePollId=id;
   const p=activePoll(); if(!p) return;
-  const qInput=document.getElementById('builder-q'); if(qInput) qInput.value=p.question;
-  builderOpts=p.options.map(o=>o.label);
-  builderOptImages=p.options.map(o=>o.imgSrc||null);
-  buildSwitcher(); renderBuilderOpts(); buildSimGrid(); renderAll();
+  syncBuilderFromPoll(p);
+  buildSwitcher(); buildSimGrid(); renderAll(); renderPollUrls();
+}
+
+// ═══════════════════════════════════════════
+//  ARCHIVE
+// ═══════════════════════════════════════════
+function renderArchiveSummary() {
+  const el=document.getElementById('archive-summary'); if(!el) return;
+  const total     = polls.length;
+  const totalVotes= polls.reduce((s,p)=>s+p.options.reduce((ss,o)=>ss+o.votes,0),0);
+  const active    = polls.filter(p=>pollStatus(p)==='active').length;
+  const ended     = polls.filter(p=>pollStatus(p)==='ended').length;
+  el.innerHTML = `
+    <div class="archive-stat"><div class="archive-stat-num">${total}</div><div class="archive-stat-lbl">Total Polls</div></div>
+    <div class="archive-stat"><div class="archive-stat-num">${totalVotes.toLocaleString()}</div><div class="archive-stat-lbl">Total Votes</div></div>
+    <div class="archive-stat"><div class="archive-stat-num" style="color:#34d399">${active}</div><div class="archive-stat-lbl">Active</div></div>
+    <div class="archive-stat"><div class="archive-stat-num" style="color:rgba(255,100,100,.8)">${ended}</div><div class="archive-stat-lbl">Ended</div></div>`;
+}
+
+function setFilter(f, btn) {
+  archiveFilter=f;
+  document.querySelectorAll('.archive-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderArchive();
+}
+
+function renderArchive() {
+  const search=(document.getElementById('archive-search')?.value||'').toLowerCase();
+  const container=document.getElementById('archive-rows'); if(!container) return;
+
+  let filtered=polls.filter(p=>{
+    if(archiveFilter!=='all' && pollStatus(p)!==archiveFilter) return false;
+    if(search && !((p.title||'').toLowerCase().includes(search))
+              && !(p.question.toLowerCase().includes(search))) return false;
+    return true;
+  }).slice().reverse(); // newest first
+
+  if(!filtered.length){
+    container.innerHTML=`<div class="archive-empty">No polls match this filter</div>`;
+    return;
+  }
+
+  container.innerHTML='';
+  filtered.forEach(p=>{
+    const total=p.options.reduce((s,o)=>s+o.votes,0);
+    const status=pollStatus(p);
+    const created=p.createdAt?new Date(p.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+    const maxV=Math.max(...p.options.map(o=>o.votes),1);
+
+    const rowWrap=document.createElement('div');
+    rowWrap.style.cssText='border-bottom:1px solid var(--border);';
+
+    const row=document.createElement('div');
+    row.className='archive-row';
+    row.style.cssText='cursor:pointer;';
+    row.innerHTML=`
+      <div>
+        <div class="archive-row-title">${p.title||p.name||`Poll ${p.id}`}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px;letter-spacing:.06em;">ID: ${p.uid||'—'}</div>
+      </div>
+      <div class="archive-row-question">${p.question||'—'}</div>
+      <div class="archive-row-votes">${total.toLocaleString()}</div>
+      <div><span class="poll-status-badge ${status}">${statusLabel(status)}</span></div>
+      <div class="archive-row-date">${created}</div>
+      <div class="archive-row-actions">
+        <button class="arch-btn" onclick="toggleArchiveExpand(event,'expand-${p.id}')">▾ Results</button>
+        <button class="arch-btn reload" onclick="reloadPoll(event,${p.id})">↺ Load</button>
+        <button class="arch-btn del" onclick="archiveDeletePoll(event,${p.id})">✕</button>
+      </div>`;
+
+    // expandable results
+    const expand=document.createElement('div');
+    expand.className='archive-results-row';
+    expand.id=`expand-${p.id}`;
+    p.options.forEach((opt,i)=>{
+      const pct=total>0?Math.round((opt.votes/total)*100):0;
+      const color=COLORS[i%COLORS.length];
+      const isLeader=opt.votes===maxV&&opt.votes>0;
+      expand.innerHTML+=`
+        <div class="arch-result-bar-wrap">
+          <div class="arch-result-lbl">${opt.label}</div>
+          <div class="arch-result-track"><div class="arch-result-fill" style="width:${pct}%;background:${isLeader?accent:color+'80'}"></div></div>
+          <div class="arch-result-pct">${pct}%</div>
+          <div class="arch-result-votes">${opt.votes.toLocaleString()} votes</div>
+        </div>`;
+    });
+
+    rowWrap.appendChild(row); rowWrap.appendChild(expand);
+    container.appendChild(rowWrap);
+  });
+}
+
+function toggleArchiveExpand(e,id) {
+  e.stopPropagation();
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.toggle('open');
+}
+
+function reloadPoll(e,id) {
+  e.stopPropagation();
+  activePollId=id;
+  syncBuilderFromPoll(activePoll());
+  saveState(); buildSwitcher(); buildSimGrid(); renderAll(); renderPollUrls();
+  goBack();
+  showToast('Poll loaded to dashboard');
+}
+
+function archiveDeletePoll(e,id) {
+  e.stopPropagation();
+  if(polls.length===1){showToast('Cannot delete last poll');return;}
+  if(!confirm('Delete this poll permanently?')) return;
+  const idx=polls.findIndex(p=>p.id===id);
+  polls.splice(idx,1);
+  if(activePollId===id) {
+    activePollId=polls[Math.max(0,idx-1)].id;
+    syncBuilderFromPoll(activePoll());
+    buildSwitcher(); buildSimGrid(); renderAll(); renderPollUrls();
+  }
+  saveState(); renderArchiveSummary(); renderArchive();
+  showToast('Poll deleted');
 }
 
 // ═══════════════════════════════════════════
@@ -1489,12 +1870,12 @@ function switchPoll(id) {
 function simVote(i) {
   const p=activePoll(); if(!p||p.closed) return;
   p.options[i].votes++;
-  const surging=detectSurges(); renderAll(surging); triggerSurgeEffects(surging);
+  const surging=detectSurges(); saveState(); renderAll(surging); triggerSurgeEffects(surging);
 }
 function addBatch(n) {
   const p=activePoll(); if(!p||p.closed) return;
   for(let i=0;i<n;i++) p.options[Math.floor(Math.random()*p.options.length)].votes++;
-  const surging=detectSurges(); renderAll(surging); triggerSurgeEffects(surging);
+  const surging=detectSurges(); saveState(); renderAll(surging); triggerSurgeEffects(surging);
 }
 function triggerSurgeEffects(surging) {
   surging.forEach(i=>{
@@ -1511,14 +1892,14 @@ function toggleStream() {
     streamInterval=setInterval(()=>{
       const p=activePoll(); if(!p||p.closed) return;
       p.options[Math.floor(Math.random()*p.options.length)].votes++;
-      const surging=detectSurges(); renderAll(surging); triggerSurgeEffects(surging);
+      const surging=detectSurges(); saveState(); renderAll(surging); triggerSurgeEffects(surging);
     },500);
   } else clearInterval(streamInterval);
 }
 function resetVotes() {
   const p=activePoll(); if(!p) return;
   p.options.forEach(o=>o.votes=0); p.hasVoted=false; p.selected=null; p.closed=false;
-  lastVoteCounts={}; renderAll();
+  lastVoteCounts={}; saveState(); renderAll();
 }
 function buildSimGrid() {
   const grid=document.getElementById('sim-grid'); if(!grid) return;
@@ -1532,6 +1913,67 @@ function buildSimGrid() {
 }
 
 // ═══════════════════════════════════════════
+//  IMAGE UPLOADS
+// ═══════════════════════════════════════════
+function handleOptImageUpload(e,idx) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    builderOptImages[idx]=ev.target.result;
+    const btn=document.querySelector(`.opt-img-upload-btn[data-idx="${idx}"]`);
+    if(btn){
+      const thumb=btn.querySelector('.thumb'); const icon=btn.querySelector('svg');
+      if(thumb){thumb.src=ev.target.result;thumb.style.display='block';}
+      if(icon) icon.style.display='none';
+    }
+    showToast('Image added to option');
+  };
+  reader.readAsDataURL(file);
+}
+function handleLogoUpload(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    logoSrc=ev.target.result;
+    const img=document.getElementById('logo-preview-img');
+    const ph =document.getElementById('logo-preview-ph');
+    if(img){img.src=logoSrc;img.style.display='block';}
+    if(ph) ph.style.display='none';
+    saveState(); renderAll(); showToast('Logo uploaded');
+  };
+  reader.readAsDataURL(file);
+}
+function clearLogo() {
+  logoSrc=null;
+  const img=document.getElementById('logo-preview-img');
+  const ph =document.getElementById('logo-preview-ph');
+  if(img){img.src='';img.style.display='none';}
+  if(ph) ph.style.display='block';
+  saveState(); renderAll(); showToast('Logo cleared');
+}
+function handleQRUpload(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    qrSrc=ev.target.result;
+    const img=document.getElementById('qr-preview-img');
+    const ph =document.getElementById('qr-preview-ph');
+    if(img){img.src=qrSrc;img.style.display='block';}
+    if(ph) ph.style.display='none';
+    saveState(); renderAll(); showToast('QR code uploaded');
+  };
+  reader.readAsDataURL(file);
+}
+function clearQR() {
+  qrSrc=null;
+  const img=document.getElementById('qr-preview-img');
+  const ph =document.getElementById('qr-preview-ph');
+  if(img){img.src='';img.style.display='none';}
+  if(ph) ph.style.display='block';
+  saveState(); renderAll(); showToast('QR cleared');
+}
+
+// ═══════════════════════════════════════════
 //  APPEARANCE
 // ═══════════════════════════════════════════
 function buildSwatches() {
@@ -1541,7 +1983,7 @@ function buildSwatches() {
     const s=document.createElement('div');
     s.className='swatch'+(hex===accent?' active':'');
     s.style.background=hex;
-    s.onclick=()=>{accent=hex;buildSwatches();renderAll();};
+    s.onclick=()=>{accent=hex;saveState();buildSwatches();renderAll();};
     row.appendChild(s);
   });
 }
@@ -1559,7 +2001,7 @@ function buildPresets() {
       accent=p.accent;
       const ltInner=document.querySelector('#view-lower-third .lt-inner');
       if(ltInner) ltInner.style.background=p.glass;
-      buildSwatches(); renderAll();
+      saveState(); buildSwatches(); renderAll();
     };
     grid.appendChild(btn); first=false;
   });
@@ -1568,13 +2010,14 @@ function updateKeyword() {
   const val=document.getElementById('kw-input')?.value||'Viewer Vote';
   const parts=val.trim().split(/\s+/);
   keyword=parts.length>=2?parts[0]+'\n'+parts.slice(1).join(' '):val;
-  renderLT(); renderFS(); renderMiniLT(); renderMiniFS();
+  saveState(); renderLT(); renderFS(); renderMiniLT(); renderMiniFS();
 }
 function updateTicker() {
   ticker=document.getElementById('ticker-input')?.value||'';
   const t1=document.getElementById('lt-ticker'); if(t1) t1.textContent=ticker;
   const t2=document.getElementById('fs-ticker'); if(t2) t2.textContent=ticker;
   const t3=document.getElementById('pw-qr-url'); if(t3) t3.textContent=ticker;
+  saveState();
 }
 
 // ═══════════════════════════════════════════
@@ -1585,8 +2028,10 @@ function updateBadges() {
   const fsB=document.getElementById('badge-fs'); if(fsB) fsB.classList.toggle('show',fsVisible);
 }
 function navTake() {
-  window.open(location.pathname+'?view=lower-third','_blank');
-  showToast('Lower third opened — point your broadcast software there');
+  const p=activePoll();
+  const uid=p?`&poll=${p.uid}`:'';
+  window.open(`${location.pathname}?view=lower-third${uid}`,'_blank');
+  showToast('Lower third opened — point OBS browser source there');
 }
 
 // ═══════════════════════════════════════════
@@ -1602,7 +2047,8 @@ function showToast(msg) {
 //  INIT
 // ═══════════════════════════════════════════
 function buildDash() {
-  renderBuilderOpts(); buildSwatches(); buildPresets(); buildSimGrid(); buildSwitcher();
+  syncBuilderFromPoll(activePoll());
+  buildSwatches(); buildPresets(); buildSimGrid(); buildSwitcher(); renderPollUrls();
 }
 route();
 </script>
