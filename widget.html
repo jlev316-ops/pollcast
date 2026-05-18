@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PollCast Widget</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="widget-body">
+<div class="widget">
+  <div class="widget-header">
+    <h1 id="question"></h1>
+    <div class="widget-meta"><span id="total"></span> votes</div>
+  </div>
+  <div class="widget-options" id="options"></div>
+  <div class="widget-footer" id="message">Select an answer to vote. Percentages update live.</div>
+</div>
+<script src="shared.js"></script>
+<script>
+let state = PollCast.loadState();
+let poll = PollCast.getPollFromUrl(state);
+const voteKey = `pollcast_voted_${poll.id}`;
+
+function render(){
+  state = PollCast.loadState();
+  poll = PollCast.getPollFromUrl(state);
+  document.getElementById('question').textContent = poll.question || '';
+  document.getElementById('total').textContent = PollCast.totalVotes(poll).toLocaleString();
+  const voted = localStorage.getItem(voteKey);
+  const wrap = document.getElementById('options');
+  wrap.innerHTML = '';
+  poll.options.forEach((opt, i) => {
+    const pct = PollCast.percent(opt, poll);
+    const row = document.createElement('div');
+    row.className = 'widget-option';
+    row.innerHTML = `<div class="widget-bar" style="width:${pct}%"></div><button ${voted ? 'disabled' : ''} onclick="vote(${i})">${opt.image ? `<img src="${opt.image}" alt="">` : ''}<span class="widget-label">${opt.label}</span><span class="widget-pct">${pct}%</span></button>`;
+    wrap.appendChild(row);
+  });
+  document.getElementById('message').textContent = voted ? 'Thanks for voting.' : 'Select an answer to vote. Percentages update live.';
+}
+window.vote = i => {
+  if(localStorage.getItem(voteKey)) return;
+  state = PollCast.loadState();
+  poll = PollCast.getPollFromUrl(state);
+  poll.options[i].votes = Number(poll.options[i].votes || 0) + 1;
+  localStorage.setItem(voteKey, '1');
+  PollCast.saveState(state);
+  render();
+};
+render();
+window.addEventListener('storage', render);
+setInterval(render, 1000);
+</script>
+</body>
+</html>
